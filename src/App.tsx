@@ -18,8 +18,8 @@ function App() {
       <Router>
         <Switch>
           <Suspense fallback={Loader}>
-            <Route path="/savings_success" exact component={AccountOpenSuccessPage} />
-            <Route path="/" exact component={CompleteSavingsPage} />
+            <Route path="/OpenSavingsAccount/savings_success" exact component={AccountOpenSuccessPage} />
+            <Route path="/OpenSavingsAccount" exact component={CompleteSavingsPage} />
           </Suspense>
         </Switch>
         {/* <Footer /> */}

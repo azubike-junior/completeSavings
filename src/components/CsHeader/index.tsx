@@ -21,7 +21,7 @@ export default function CsHeader({ currentStep }: any) {
                 <li className="nav-item pl-4 pl-md-0 ml-0 ml-md-4">
                   <a
                     href="https://suntrustng.com/"
-                    className="btn btn-block btn-suntrust font-weight-900"
+                    className="btn btn-block btn-suntrust font-weight-900 font-poppins"
                   >
                     Home
                   </a>
@@ -36,7 +36,7 @@ export default function CsHeader({ currentStep }: any) {
         <div className="page">
           <div className="flex-column">
             <div className="card nib_savings">
-              <label className="text-center font-weight-700 nib">
+              <label className="text-center font-weight-700 nib font-poppins">
                 OPEN A SAVINGS ACCOUNT
               </label>
             </div>

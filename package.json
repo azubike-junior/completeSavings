@@ -2,7 +2,7 @@
   "name": "account-opening",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ubanking.suntrustng.com/OpenSavingsAccount",
+  "homepage": "http://10.11.200.97/OpenSavingsAccount",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.3.0-beta2",
     "@hookform/resolvers": "^2.8.3",

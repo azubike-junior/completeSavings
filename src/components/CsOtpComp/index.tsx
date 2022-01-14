@@ -97,7 +97,7 @@ export default function OtpLayer({ data }: any) {
           (e.target.value = e.target.value.slice(0, 6))
         }
       />
-      <button
+      <div
         style={{
           border: "none",
           cursor: "pointer",
@@ -108,7 +108,7 @@ export default function OtpLayer({ data }: any) {
         onClick={() => smsService(300000)}
       >
         Resend OTP
-      </button>
+      </div>
       <div className="d-flex align-items-center justify-content-center m-t-20">
         <button
           className="btn bvn-gray col-lg-6 col-md-3 col-sm-12 shadow-sm bg-body rounded"

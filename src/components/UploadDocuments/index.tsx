@@ -1,8 +1,8 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent, useState, useRef } from "react";
 import { CsProps } from "../../interfaces";
 import { useForm } from "react-hook-form";
 import { useStateMachine } from "little-state-machine";
-import { getBase64, updateName } from "./../../utils/utilities";
+import { getBase64, getValues, updateName } from "./../../utils/utilities";
 import {
   validateFileSize,
   FileService,
@@ -27,7 +27,12 @@ export default function UploadDocuments() {
   const [preview, setPreview] = useState<string>();
   const [fileUrl, setFileUrl] = useState("");
 
-  const { data: uploadTypes } = useGetUploadTypeQuery("");
+  const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+
+  const { data: documentTypes } = useGetUploadTypeQuery("");
+  const newValue = { value: "", text: "" };
+
+  const uploadTypes = getValues(documentTypes, newValue);
 
   const handleFiles = async (e: HTMLInputElement) => {
     const file = e.files;
@@ -56,12 +61,6 @@ export default function UploadDocuments() {
     setDoc(file[0]);
     setFileType(file[0].type);
     setImageName(file[0].name);
-    // imageToBase64(file)
-    //   .then((response: any) => {
-    //     console.log("base64", response)
-    //     setFileBase64(response);
-    //   })
-    //   .catch((e: any) => console.log(e));
     getBase64(file).then((result) => {
       setFileBase64(result);
     });
@@ -129,6 +128,8 @@ export default function UploadDocuments() {
       ...state.data,
       uploadDocumentRequest: [...docArray, newData],
     });
+
+    inputRef.current.value = ""
   };
 
   const confirmAndContinue = () => {
@@ -161,6 +162,8 @@ export default function UploadDocuments() {
       setPreview("");
     }
   };
+
+  console.log(">>>>>>state", state.data);
 
   return (
     <div className="px-4">
@@ -245,7 +248,6 @@ export default function UploadDocuments() {
                           <div className="form-group col-lg-4 col-md-6 col-sm-12 font-weight-700">
                             <label>SELECT A DOCUMENT TO UPLOAD</label>
                             <span className="text-danger">*</span>
-
                             <select
                               className="form-control"
                               // name="uploadDocuments.docType"
@@ -277,6 +279,7 @@ export default function UploadDocuments() {
                             <div className="border py-1 pl-2">
                               <input
                                 type="file"
+                                ref={inputRef}
                                 onChange={(e: SyntheticEvent) =>
                                   handleFiles(
                                     e.currentTarget as HTMLInputElement

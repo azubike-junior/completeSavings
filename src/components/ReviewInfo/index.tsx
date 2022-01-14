@@ -281,14 +281,14 @@ export default function REVIEW() {
                         </div>
                       </div>
                     )}
-                    <div className="d-flex m-b-10 margin_bottom font_size">
+                    {/* <div className="d-flex m-b-10 margin_bottom font_size">
                       <label className="col-lg-4 col-md-6 col-sm-12">
                         PLACE OF BIRTH
                       </label>
                       <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
                         {_city}
                       </div>
-                    </div>
+                    </div> */}
                     {_state && (
                       <div className="d-flex m-b-10 margin_bottom font_size">
                         <label className="col-lg-4 col-md-6 col-sm-12">
@@ -591,6 +591,17 @@ export default function REVIEW() {
                 </div>
 
                 <div className="form-group col-lg-12 col-md-12 col-sm-12 m-b-20">
+                  {responseData?.responseCode === "96" && (
+                    <span className="text-danger d-flex justify-content-center">
+                      This BVN has been used to create an Account.
+                    </span>
+                  )}
+
+                  {isError && (
+                    <span className="text-danger d-flex justify-content-center align-items-center">
+                      sorry, something went wrong
+                    </span>
+                  )}
                   <div className="d-flex align-items-center justify-content-center m-t-20">
                     <div className="user_acct_details col-lg-2 col-md-6 col-sm-12">
                       <button

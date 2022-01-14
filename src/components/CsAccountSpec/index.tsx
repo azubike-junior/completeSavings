@@ -161,6 +161,8 @@ export default function AccountSpecifications() {
     },
   });
 
+  console.log(">>>>>>lga", LGA, cities);
+
   const pattern2 = {
     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
     message: "invalid email address",
@@ -388,9 +390,9 @@ export default function AccountSpecifications() {
                         <SelectInput
                           className="form-group col-lg-4 col-md-6 col-sm-12 font-weight-700"
                           name="city"
-                          label="PLACE OF BIRTH"
+                          label="CITY/TOWN"
                           register={register}
-                          selectArray={getValues(states, newValue)}
+                          selectArray={getValues(cities, newValue)}
                           // selectArray={cities}
                           required
                           // errors={errors.city}
@@ -473,7 +475,7 @@ export default function AccountSpecifications() {
                 <div className="panel-heading text-center bg-gray white-text text-white font-weight-900">
                   ADDRESS DETAILS
                 </div>
-                <div className="panel-body">
+                <div className="panel-body panel-height">
                   <div className="user_bvn_data_row1 font-12">
                     <div className="col-lg-12">
                       <div className="row">
@@ -526,7 +528,7 @@ export default function AccountSpecifications() {
                 <div className="panel-heading text-center bg-gray white-text text-white font-weight-900">
                   MEANS OF IDENTIFICATION
                 </div>
-                <div className="panel-body">
+                <div className="panel-body panel-height">
                   <div className="user_bvn_data_row1 font-12">
                     <div className="col-lg-12">
                       <div className="row">
@@ -546,17 +548,17 @@ export default function AccountSpecifications() {
                         <div className="form-group col-lg-12 col-md-6 col-sm-12 font-weight-700">
                           <HookInputField
                             label="ID NUMBER"
-                            type="number"
-                            minLength={11}
+                            type="text"
+                            // minLength={11}
                             register={register}
                             errors={errors.idNumber}
-                            onInput={(e: React.ChangeEvent<HTMLInputElement>) =>
-                              (e.target.value = e.target.value.slice(0, 11))
-                            }
+                            // onInput={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            //   (e.target.value = e.target.value.slice(0, 11))
+                            // }
                             required
                             placeholder="id Number"
                             name="idNumber"
-                            message="id number must be 12 digit"
+                            message="ID number must be 12 digit"
                           />
                         </div>
 
@@ -598,7 +600,7 @@ export default function AccountSpecifications() {
                 <div className="panel-heading text-center bg-gray white-text text-white font-weight-900">
                   ACCOUNT SPECIFICATIONS
                 </div>
-                <div className="panel-body">
+                <div className="panel-body panel-height">
                   <div className="user_bvn_data_row1 font-12">
                     <div className="col-lg-12">
                       <div className="row">
@@ -640,7 +642,7 @@ export default function AccountSpecifications() {
                 <div className="panel-heading text-center bg-gray white-text text-white font-weight-900">
                   NEXT OF KIN
                 </div>
-                <div className="panel-body">
+                <div className="panel-body panel-height-2">
                   <div className="user_bvn_data_row1 font-12">
                     <div className="col-lg-12">
                       <div className="row">
@@ -734,7 +736,7 @@ export default function AccountSpecifications() {
                 <div className="panel-heading text-center bg-gray white-text text-white font-weight-900">
                   EMPLOYMENT DETAILS
                 </div>
-                <div className="panel-body">
+                <div className="panel-body panel-height-3">
                   <div className="user_bvn_data_row1 font-12">
                     <div className="col-lg-12">
                       <div className="row">
@@ -770,125 +772,124 @@ export default function AccountSpecifications() {
         </div>
 
         {/* <!-- ACCOUNT SERVICES REQUIRED --> */}
-        <div className="col-lg-6">
+        <div className="col-lg-12">
           <div className="panel panel-default">
             <div className="panel-heading text-center bg-gray white-text text-white font-weight-900">
               ACCOUNT SERVICES REQUIRED (fees may apply)
             </div>
-            <div className="panel-body">
-              <div className="user_bvn_data_row1">
-                <div className="col-lg-12">
-                  <div className="row">
-                    <div className="form-group col-lg-12 col-md-6 col-sm-12 font-weight-700">
-                      <label>ELECTRONIC BANKING PREFERENCES</label>
+            <div className="panel-body block d-md-flex d-lg-flex">
+              <div className="form-group col-md-6">
+                <label className="ml-3">ELECTRONIC BANKING PREFERENCES</label>
 
-                      <div className="eb_pref font-12 form-group col-lg-12 col-md-6 col-sm-12">
-                        <div className=" pl-4 form-check-inline flex justify-center">
-                          <input
-                            checked={
-                              state.data.accountServicesRequest
-                                .electronicBankPreference?.internetBanking
-                                ? true
-                                : false
-                            }
-                            // {...register(name)}
-                            name="accountServiceRequest.electronicBankPreference.internetBanking"
-                            value="internetBanking"
-                            type="checkbox"
-                            className="form-check-input mt-1"
-                            onChange={handleInternetBanking}
-                            data-parsley-errors-container="#error-checkbox"
-                          />
-                          <label className="pt-3">INTERNET BANKING</label>
-                        </div>
-                        <div className=" pl-4 form-check-inline flex justify-center">
-                          <input
-                            checked={
-                              state.data.accountServicesRequest
-                                .electronicBankPreference?.debitCard
-                                ? true
-                                : false
-                            }
-                            // {...register(name)}
-                            name="accountServiceRequest.electronicBankPreference.debitCard"
-                            value="debitCard"
-                            type="checkbox"
-                            className="form-check-input mt-1"
-                            onChange={handleDebitCard}
-                            data-parsley-errors-container="#error-checkbox"
-                          />
-                          <label className="pt-3">DEBIT CARD</label>
-                        </div>
-                        <div className=" pl-4 form-check-inline flex justify-center">
-                          <input
-                            name="accountServiceRequest.electronicBankPreference.mobileMoney"
-                            checked={
-                              state.data.accountServicesRequest
-                                .electronicBankPreference?.mobileMoney
-                                ? true
-                                : false
-                            }
-                            value="mobileMoney"
-                            type="checkbox"
-                            className="form-check-input mt-1"
-                            onChange={handleMobileMoney}
-                            data-parsley-errors-container="#error-checkbox"
-                          />
-                          <label className="pt-3">MOBILE MONEY</label>
-                        </div>
-
-                        <p id="error-checkbox"></p>
-                      </div>
-                    </div>
-
-                    <div className="form-group col-lg-12 col-md-6 col-sm-12 font-weight-700">
-                      <label>TRANSACTION ALERT PREFERENCES</label>
-
-                      <div className="eb_pref font-12 form-group col-lg-12 col-md-6 col-sm-12">
-                        <div className=" pl-4 form-check-inline flex justify-center">
-                          <input
-                            name="accountServiceRequest.transactionAlertPreference.emailAlert"
-                            checked={
-                              state.data.accountServicesRequest
-                                .transactionAlertPreference?.emailAlert
-                                ? true
-                                : false
-                            }
-                            value="emailAlert"
-                            type="checkbox"
-                            className="form-check-input mt-1"
-                            onChange={handleEmailAlert}
-                            data-parsley-errors-container="#error-checkbox"
-                          />
-                          <label className="pt-3">EMAIL ALERT</label>
-                        </div>
-                        <div className=" pl-4 form-check-inline flex justify-center">
-                          <input
-                            name="accountServiceRequest.transactionAlertPreference.smsAlert"
-                            checked={
-                              state.data.accountServicesRequest
-                                .transactionAlertPreference?.smsAlert
-                                ? true
-                                : false
-                            }
-                            value="smsAlert"
-                            type="checkbox"
-                            className="form-check-input mt-1"
-                            onChange={handleSmsAlert}
-                            data-parsley-errors-container="#error-checkbox"
-                          />
-                          <label className="pt-3">SMS ALERT</label>
-                        </div>
-
-                        <p id="error-checkbox"></p>
-                      </div>
-                    </div>
+                <div className="eb_pref font-12 form-group col-lg-12 col-md-6 col-sm-12">
+                  <div className="form-check-inline flex justify-center">
+                    <input
+                      checked={
+                        state.data.accountServicesRequest
+                          .electronicBankPreference?.internetBanking
+                          ? true
+                          : false
+                      }
+                      // {...register(name)}
+                      name="accountServiceRequest.electronicBankPreference.internetBanking"
+                      value="internetBanking"
+                      type="checkbox"
+                      className="form-check-input mt-1"
+                      onChange={handleInternetBanking}
+                      data-parsley-errors-container="#error-checkbox"
+                    />
+                    <label className="pt-3">INTERNET BANKING</label>
                   </div>
+                  <div className="pl-4 form-check-inline flex justify-center">
+                    <input
+                      checked={
+                        state.data.accountServicesRequest
+                          .electronicBankPreference?.debitCard
+                          ? true
+                          : false
+                      }
+                      // {...register(name)}
+                      name="accountServiceRequest.electronicBankPreference.debitCard"
+                      value="debitCard"
+                      type="checkbox"
+                      className="form-check-input mt-1"
+                      onChange={handleDebitCard}
+                      data-parsley-errors-container="#error-checkbox"
+                    />
+                    <label className="pt-3">DEBIT CARD</label>
+                  </div>
+                  <div className=" pl-4 form-check-inline flex justify-center">
+                    <input
+                      name="accountServiceRequest.electronicBankPreference.mobileMoney"
+                      checked={
+                        state.data.accountServicesRequest
+                          .electronicBankPreference?.mobileMoney
+                          ? true
+                          : false
+                      }
+                      value="mobileMoney"
+                      type="checkbox"
+                      className="form-check-input mt-1"
+                      onChange={handleMobileMoney}
+                      data-parsley-errors-container="#error-checkbox"
+                    />
+                    <label className="pt-3">MOBILE MONEY</label>
+                  </div>
+
+                  <p id="error-checkbox"></p>
+                </div>
+              </div>
+
+              <div className="form-group col-lg-12 col-md-6 col-sm-12">
+                <label className="ml-3">TRANSACTION ALERT PREFERENCES</label>
+                <div className="eb_pref font-12 form-group col-lg-12 col-md-6 col-sm-12">
+                  <div className="form-check-inline flex justify-center">
+                    <input
+                      name="accountServiceRequest.transactionAlertPreference.emailAlert"
+                      checked={
+                        state.data.accountServicesRequest
+                          .transactionAlertPreference?.emailAlert
+                          ? true
+                          : false
+                      }
+                      value="emailAlert"
+                      type="checkbox"
+                      className="form-check-input mt-1"
+                      onChange={handleEmailAlert}
+                      data-parsley-errors-container="#error-checkbox"
+                    />
+                    <label className="pt-3">EMAIL ALERT</label>
+                  </div>
+                  <div className=" form-check-inline flex justify-center">
+                    <input
+                      name="accountServiceRequest.transactionAlertPreference.smsAlert"
+                      checked={
+                        state.data.accountServicesRequest
+                          .transactionAlertPreference?.smsAlert
+                          ? true
+                          : false
+                      }
+                      value="smsAlert"
+                      type="checkbox"
+                      className="form-check-input mt-1"
+                      onChange={handleSmsAlert}
+                      data-parsley-errors-container="#error-checkbox"
+                    />
+                    <label className="pt-3">SMS ALERT</label>
+                  </div>
+
+                  <p id="error-checkbox"></p>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        {Object.keys(errors).length > 0 && (
+          <span className="text-danger d-flex justify-content-center">
+            Please fill all required fields.
+          </span>
+        )}
 
         <div className="form-group col-lg-12 col-md-12 col-sm-12 m-b-20">
           <div className="d-flex align-items-center justify-content-center m-t-20">

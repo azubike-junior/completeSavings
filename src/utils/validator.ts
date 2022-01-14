@@ -64,14 +64,12 @@ export class FileService {
   }
 }
 
-
-
 interface ValidatorResponse {
   isValid: boolean;
   errorMessage: string;
 }
 
-const fileTypes = ["jpg", "png", "doc", "docx"];
+const fileTypes = ["jpg", "jpeg", "png", "doc", "docx", "pdf"];
 
 async function validateFileSize(fileSize: number): Promise<ValidatorResponse> {
   const validator = new DocumentFileSizeValidator(fileSize);

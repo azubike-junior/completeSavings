@@ -2,6 +2,7 @@ export interface CsProps {
   _uploadTypes?: string;
   _branchcode?: string;
   _lga?: string;
+  _addressLga?: string;
   _title?: string;
   _gender?: string;
   _city?: string;
@@ -12,6 +13,7 @@ export interface CsProps {
   firstName?: string;
   lastName?: string;
   middleName?: string;
+  addressLga?: number;
   telNumber1?: string;
   telNumber2?: string;
   dateofBirth?: string;
@@ -21,7 +23,7 @@ export interface CsProps {
   address2?: string;
   city?: number;
   motherMaidenName?: string;
-  gender?: number;
+  gender?: string;
   imgName?: string;
   state?: number;
   documentType?: string;
@@ -81,7 +83,7 @@ export interface DataProps {
   maritalStatus: string;
   address: string;
   residentialAddress: string;
-  responseCode?: string
+  responseCode?: string;
 }
 
 export interface NextOfKin {

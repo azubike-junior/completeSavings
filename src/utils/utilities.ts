@@ -67,12 +67,9 @@ export const getBase64 = (file: any) => {
     // on reader load somthing...
     reader.onloadend = () => {
       // Make a fileInfo Object
-      console.log("Called", reader);
       // baseURL = reader.result;
-      console.log(baseURL);
       resolve(reader.result);
     };
-    console.log(fileInfo);
   });
 };
 
@@ -122,6 +119,13 @@ export const getValues = (data: any, type: {}) => {
   }
   return [];
 };
+
+export const addOthers = (data: any, type: {}) => {
+  if(data?.length > 0) {
+    return [...data, type]
+  }
+  return []
+}
 
 export const getText = (data: any, value: any) => {
   return data[value]?.text;

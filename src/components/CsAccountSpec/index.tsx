@@ -146,10 +146,22 @@ export default function AccountSpecifications() {
 
   const { data: states } = useGetStatesQuery("");
   const { data: LGA } = useGetLgtQuery("");
-  const { data: uploadTypes } = useGetUploadTypeQuery("");
+  const { data: docTypes } = useGetUploadTypeQuery("");
   const { data: cities } = useGetCityQuery("");
-  const { data: branches } = useGetBankBranchQuery("");
+  const { data: bankBranches } = useGetBankBranchQuery("");
   const newValue = { value: "", text: "-select-" };
+
+  const branches = bankBranches?.filter(
+    (branch: { text: string; value: string }) =>
+      branch.value !== "203" && branch.value !== "208" && branch.value !== "201"
+  );
+
+  const uploadTypes = docTypes?.filter(
+    (doc: { text: string; value: string }) =>
+      doc.text !== "NIN" &&
+      doc.text !== "Signature" &&
+      doc.text !== "Passport Photograph"
+  );
 
   const {
     register,
@@ -160,8 +172,6 @@ export default function AccountSpecifications() {
       ...state.data,
     },
   });
-
-  console.log(">>>>>>lga", LGA, cities);
 
   const pattern2 = {
     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -177,7 +187,7 @@ export default function AccountSpecifications() {
     data.dateofBirth = convertDateToNum(response?.dateOfBirth);
     data.nationality = response?.nationality;
     data.city = Number(data.city);
-    data.gender = Number(data.gender);
+    data.gender = response?.gender;
     data.title = Number(data.title);
     data.lga = Number(data.lga);
     data.state = Number(data.state);
@@ -185,10 +195,11 @@ export default function AccountSpecifications() {
     data.maritalStatus = Number(data.maritalStatus);
     data.religion = Number(data.religion);
     data.stateOfResidence = Number(data.stateOfResidence);
-
+    data.addressLga = Number(data.addressLga);
     data._city = getText(cities, data?.city);
     data._gender = getText(genders, data?.gender);
     data._lga = getText(LGA, data.lga);
+    data._addressLga = getText(LGA, data.addressLga);
     data._state = getText(states, data.state);
     data._title = getText(titles, data.title);
     data._branchcode = getText(branches, data.branchcode);
@@ -274,19 +285,17 @@ export default function AccountSpecifications() {
                           type="text"
                           message="title field is required"
                         />
-
-                        <SelectInput
-                          className="form-group col-lg-4 col-md-6 col-sm-12 font-weight-700"
-                          required
-                          name="gender"
-                          label="GENDER"
-                          register={register}
-                          selectArray={getValues(genders, newValue)}
-                          // selectArray={genders}
-                          // errors={errors.gender}
-                          type="text"
-                          message="gender field is required"
-                        />
+                        <div className="form-group col-lg-4 col-md-6 col-sm-12 font-weight-700">
+                          <HookInputField
+                            label="GENDER"
+                            type="text"
+                            readOnly
+                            value={response?.gender}
+                            // value="76339393993"
+                            register={register}
+                            name="gender"
+                          />
+                        </div>
 
                         <div className="form-group col-lg-4 col-md-6 col-sm-12 font-weight-700">
                           <HookInputField
@@ -488,20 +497,20 @@ export default function AccountSpecifications() {
                             required
                             placeholder="Enter address"
                             name="address1"
-                            message="residential address is required"
+                            message="Residential address is required"
                           />
                         </div>
 
                         <SelectInput
                           className="form-group col-lg-12 col-md-6 col-sm-12 font-weight-700"
-                          name="lga"
+                          name="addressLga"
                           label="LGA"
                           register={register}
                           selectArray={getValues(LGA, newValue)}
                           required
                           // errors={errors.lga}
                           type="text"
-                          message="local govt is required"
+                          message="Address local government is required"
                         />
 
                         <SelectInput
@@ -542,7 +551,7 @@ export default function AccountSpecifications() {
                           required
                           // errors={errors.documentType}
                           type="text"
-                          message="document upload is required"
+                          message="Document upload is required"
                         />
 
                         <div className="form-group col-lg-12 col-md-6 col-sm-12 font-weight-700">
@@ -580,7 +589,7 @@ export default function AccountSpecifications() {
                             label="EXPIRY DATE"
                             type="date"
                             register={register}
-                            // errors={errors.expireDate}
+                            errors={errors.expireDate}
                             required
                             placeholder="enter expiry date"
                             name="expireDate"
@@ -772,7 +781,7 @@ export default function AccountSpecifications() {
         </div>
 
         {/* <!-- ACCOUNT SERVICES REQUIRED --> */}
-        <div className="col-lg-12">
+        {/* <div className="col-lg-12">
           <div className="panel panel-default">
             <div className="panel-heading text-center bg-gray white-text text-white font-weight-900">
               ACCOUNT SERVICES REQUIRED (fees may apply)
@@ -790,7 +799,6 @@ export default function AccountSpecifications() {
                           ? true
                           : false
                       }
-                      // {...register(name)}
                       name="accountServiceRequest.electronicBankPreference.internetBanking"
                       value="internetBanking"
                       type="checkbox"
@@ -808,7 +816,7 @@ export default function AccountSpecifications() {
                           ? true
                           : false
                       }
-                      // {...register(name)}
+                 
                       name="accountServiceRequest.electronicBankPreference.debitCard"
                       value="debitCard"
                       type="checkbox"
@@ -883,7 +891,7 @@ export default function AccountSpecifications() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {Object.keys(errors).length > 0 && (
           <span className="text-danger d-flex justify-content-center">

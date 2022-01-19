@@ -42,9 +42,16 @@ export const maritalStatuses = [
 export const titles = [
   { value: 1, text: "MR." },
   { value: 2, text: "MRS." },
+  { value: 4, text: "MISS" },
+  { value: 5, text: "MS" },
+  { value: 6, text: "CHIEF" },
+  { value: 9, text: "DR" },
+  { value: 11, text: "ENGR" },
   { value: 12, text: "ALHAJI" },
   { value: 13, text: "ALHAJA" },
   { value: 16, text: "PASTOR" },
+  { value: 35, text: "HIS MAJESTY" },
+  { value: 36, text: "HER MAJESTY" },
 ];
 
 export const genders = [

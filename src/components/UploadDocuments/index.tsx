@@ -2,7 +2,12 @@ import React, { SyntheticEvent, useState, useRef } from "react";
 import { CsProps } from "../../interfaces";
 import { useForm } from "react-hook-form";
 import { useStateMachine } from "little-state-machine";
-import { getBase64, getValues, updateName } from "./../../utils/utilities";
+import {
+  addOthers,
+  getBase64,
+  getValues,
+  updateName,
+} from "./../../utils/utilities";
 import {
   validateFileSize,
   FileService,
@@ -29,10 +34,12 @@ export default function UploadDocuments() {
 
   const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
-  const { data: documentTypes } = useGetUploadTypeQuery("");
-  const newValue = { value: "", text: "" };
+  let { data: documentTypes } = useGetUploadTypeQuery("");
+  const newValue = { text: "", value: "" };
 
-  const uploadTypes = getValues(documentTypes, newValue);
+  const allDocs = getValues(documentTypes, newValue);
+
+  const uploadTypes = addOthers(allDocs, { text: "Others", value: "7" });
 
   const handleFiles = async (e: HTMLInputElement) => {
     const file = e.files;
@@ -91,12 +98,12 @@ export default function UploadDocuments() {
 
   //submit function
   const submitDocuments = () => {
-    if (docTypeName === "") {
-      return setDocTypeError("you need to choose a document type to continue");
+    if (!doc) {
+      return setUploadDocError("you need to choose a file ");
     }
 
-    if (fileBase64 === "") {
-      return setUploadDocError("you need to choose a file ");
+    if (docTypeName === "") {
+      return setDocTypeError("you need to choose a document type to continue");
     }
 
     const docTypes = state.data.uploadDocumentRequest.map(
@@ -129,7 +136,7 @@ export default function UploadDocuments() {
       uploadDocumentRequest: [...docArray, newData],
     });
 
-    inputRef.current.value = ""
+    inputRef.current.value = "";
   };
 
   const confirmAndContinue = () => {
@@ -150,20 +157,6 @@ export default function UploadDocuments() {
       uploadDocumentRequest: [...newFiles],
     });
   };
-
-  const viewImage = (image: any) => {
-    if (image) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(image);
-    } else {
-      setPreview("");
-    }
-  };
-
-  console.log(">>>>>>state", state.data);
 
   return (
     <div className="px-4">

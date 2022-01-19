@@ -2,6 +2,7 @@ import { useStateMachine } from "little-state-machine";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CsProps } from "../../interfaces";
+import { useReactToPrint } from "react-to-print";
 import {
   handlePrevious,
   useOpenSavingsMutation,
@@ -24,7 +25,6 @@ import {
 import { clearData, getText, updateName } from "./../../utils/utilities";
 import { religions } from "./../../utils/constant";
 import Loader from "../Loader";
-import AcountOpenSuccessPage from "../../pages/AccountOpenSuccessPage";
 import AccountOpenSuccessPage from "../../pages/AccountOpenSuccessPage";
 
 export default function REVIEW() {
@@ -35,12 +35,13 @@ export default function REVIEW() {
   const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked(e.target.checked);
   };
+  const componentRef =
+    React.useRef() as React.MutableRefObject<HTMLInputElement>;
+
   const [
     openSavings,
     { isLoading, data: responseData, error, isSuccess, isError },
   ] = useOpenSavingsMutation();
-
-  console.log(">>>>>>response", responseData, isSuccess);
 
   const {
     register,
@@ -51,6 +52,10 @@ export default function REVIEW() {
       ...allData.data,
     },
   });
+
+    const handlePrint = useReactToPrint({
+      content: () => componentRef.current,
+    });
 
   const {
     lga,
@@ -67,6 +72,7 @@ export default function REVIEW() {
     gender,
     address1,
     telNumber1,
+    addressLga,
     city,
     documentType,
     dateOfIssue,
@@ -83,8 +89,6 @@ export default function REVIEW() {
     _lga,
     _title,
     _state,
-    _gender,
-    _city,
     accountServicesRequest: {
       transactionAlertPreference,
       electronicBankPreference,
@@ -101,8 +105,21 @@ export default function REVIEW() {
     (item: any) => item.value === stateOfResidence
   );
 
-  // const userLga = LGA?.find((item: any) => item.value === lga);
-  // const userCity = cities?.find((item: any) => item.value === city);
+  const userLga = LGA?.find(
+    (item: { text: string; value: string }) => Number(item.value) === lga
+  )?.text;
+
+  const userAddressLga = LGA?.find(
+    (item: { text: string; value: string }) => Number(item.value) === addressLga
+  )?.text;
+
+  const userCity = cities?.find(
+    (item: { text: string; value: string }) => Number(item.value) === city
+  )?.text;
+
+  // const userState = states?.find(
+  //   (item: { text: string; value: string }) => Number(item.value) === lga
+  // )?.text
 
   const userReligion = religions.find(
     (item: any) => item.value === religion
@@ -128,9 +145,10 @@ export default function REVIEW() {
       state: rest.state + " " + _state,
       lga: rest.lga + " " + _lga,
       city: rest.city + " " + _city,
+      gender: rest.gender?.toLowerCase() === "male" ? 1 : 2,
     };
 
-    const { state, lga, city, religion, ...remainingData } = rest;
+    const { state, lga, city, religion, gender, ...remainingData } = rest;
     const dataToSubmit = { ...remainingData, ...newData };
     openSavings(dataToSubmit);
     localStorage.clear();
@@ -161,206 +179,211 @@ export default function REVIEW() {
           )}
           {responseData?.responseCode !== "00" ? (
             <div className="col-lg-12">
-              <div className="row">
-                {/* <!-- PERSONAL DETAILS --> */}
-                <div className="m-t-20 col-lg-6 col-md-12">
-                  <h5>PREVIEW INFORMATION</h5>
-                  <div className="card col-lg-12 col-md-12 col-sm-12">
-                    <div className="m-t-30 m-b-20">
-                      <h6>PERSONAL DETAILS</h6>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        BVN:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {bvn}
+              <div ref={componentRef}>
+                <div className="row">
+                  {/* <!-- PERSONAL DETAILS --> */}
+                  <div className="m-t-20 col-lg-6 col-md-12">
+                    <h5>PREVIEW INFORMATION</h5>
+                    <div className="card col-lg-12 col-md-12 col-sm-12">
+                      <div className="m-t-30 m-b-20">
+                        <h6>PERSONAL DETAILS</h6>
                       </div>
-                    </div>
-                    {userTitle && (
                       <div className="d-flex m-b-10 margin_bottom font_size">
                         <label className="col-lg-4 col-md-6 col-sm-12">
-                          TITLE:
+                          BVN:
                         </label>
                         <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                          {_title}
+                          {bvn}
                         </div>
                       </div>
-                    )}
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        FIRST NAME:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {firstName}
-                      </div>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        MIDDLE NAME:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {middleName}
-                      </div>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        LAST NAME:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {lastName}
-                      </div>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        PHONE NUMBER:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {telNumber1}
-                      </div>
-                    </div>
-                    {telNumber2 && (
+                      {userTitle && (
+                        <div className="d-flex m-b-10 margin_bottom font_size">
+                          <label className="col-lg-4 col-md-6 col-sm-12">
+                            TITLE:
+                          </label>
+                          <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                            {_title}
+                          </div>
+                        </div>
+                      )}
                       <div className="d-flex m-b-10 margin_bottom font_size">
                         <label className="col-lg-4 col-md-6 col-sm-12">
-                          ALTERNATE PHONE NUMBER:
+                          FIRST NAME:
                         </label>
                         <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                          {telNumber2}
+                          {firstName}
                         </div>
                       </div>
-                    )}
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        EMAIL
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {emailAddress}
-                      </div>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        MOTHERS MAIDEN NAME
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {motherMaidenName}
-                      </div>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        DATE OF BIRTH
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {dateofBirth}
-                      </div>
-                    </div>
-                    {_gender && (
                       <div className="d-flex m-b-10 margin_bottom font_size">
                         <label className="col-lg-4 col-md-6 col-sm-12">
-                          GENDER
+                          MIDDLE NAME:
                         </label>
                         <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                          {_gender}
+                          {middleName}
                         </div>
                       </div>
-                    )}
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        MARITAL STATUS
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {status}
-                      </div>
-                    </div>
-                    {userReligion && (
                       <div className="d-flex m-b-10 margin_bottom font_size">
                         <label className="col-lg-4 col-md-6 col-sm-12">
-                          RELIGION
+                          LAST NAME:
                         </label>
                         <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                          {userReligion}
+                          {lastName}
                         </div>
                       </div>
-                    )}
-                    {/* <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        PLACE OF BIRTH
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {_city}
-                      </div>
-                    </div> */}
-                    {_state && (
                       <div className="d-flex m-b-10 margin_bottom font_size">
                         <label className="col-lg-4 col-md-6 col-sm-12">
-                          STATE OF ORIGIN
+                          PHONE NUMBER:
                         </label>
                         <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                          {_state}
+                          {telNumber1}
                         </div>
                       </div>
-                    )}
-                    {_lga && (
+                      {telNumber2 && (
+                        <div className="d-flex m-b-10 margin_bottom font_size">
+                          <label className="col-lg-4 col-md-6 col-sm-12">
+                            ALTERNATE PHONE NUMBER:
+                          </label>
+                          <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                            {telNumber2}
+                          </div>
+                        </div>
+                      )}
                       <div className="d-flex m-b-10 margin_bottom font_size">
                         <label className="col-lg-4 col-md-6 col-sm-12">
-                          L.G.A
+                          EMAIL
                         </label>
                         <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                          {_lga}
+                          {emailAddress}
                         </div>
                       </div>
-                    )}
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        NATIONALITY
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {nationality}
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          MOTHERS MAIDEN NAME
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {motherMaidenName}
+                        </div>
+                      </div>
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          DATE OF BIRTH
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {dateofBirth}
+                        </div>
+                      </div>
+                      {gender && (
+                        <div className="d-flex m-b-10 margin_bottom font_size">
+                          <label className="col-lg-4 col-md-6 col-sm-12">
+                            GENDER
+                          </label>
+                          <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                            {gender}
+                          </div>
+                        </div>
+                      )}
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          MARITAL STATUS
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {status}
+                        </div>
+                      </div>
+                      {userReligion && (
+                        <div className="d-flex m-b-10 margin_bottom font_size">
+                          <label className="col-lg-4 col-md-6 col-sm-12">
+                            RELIGION
+                          </label>
+                          <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                            {userReligion}
+                          </div>
+                        </div>
+                      )}
+                      {userCity && (
+                        <div className="d-flex m-b-10 margin_bottom font_size">
+                          <label className="col-lg-4 col-md-6 col-sm-12">
+                            CITY/TOWN
+                          </label>
+                          <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                            {userCity}
+                          </div>
+                        </div>
+                      )}
+                      {_state && (
+                        <div className="d-flex m-b-10 margin_bottom font_size">
+                          <label className="col-lg-4 col-md-6 col-sm-12">
+                            STATE OF ORIGIN
+                          </label>
+                          <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                            {_state}
+                          </div>
+                        </div>
+                      )}
+                      {userLga && (
+                        <div className="d-flex m-b-10 margin_bottom font_size">
+                          <label className="col-lg-4 col-md-6 col-sm-12">
+                            L.G.A
+                          </label>
+                          <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                            {userLga}
+                          </div>
+                        </div>
+                      )}
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          NATIONALITY
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {nationality}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* <!-- OTHER DETAILS --> */}
-                <div className="m-t-20 col-lg-6">
-                  <h5>OTHER INFORMATION</h5>
-                  <div className="card col-lg-12">
-                    {/* <!-- ADDRESS DETAILS --> */}
-                    <div className="m-t-30 m-b-20">
-                      <h6>ADDRESS DETAILS</h6>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        RESIDENTIAL ADDRESS:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {address1}
+                  {/* <!-- OTHER DETAILS --> */}
+                  <div className="m-t-20 col-lg-6">
+                    <h5>OTHER INFORMATION</h5>
+                    <div className="card col-lg-12">
+                      {/* <!-- ADDRESS DETAILS --> */}
+                      <div className="m-t-30 m-b-20">
+                        <h6>ADDRESS DETAILS</h6>
                       </div>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        L.G.A:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {_lga}
-                      </div>
-                    </div>
-                    {userStateOfResidence && (
                       <div className="d-flex m-b-10 margin_bottom font_size">
                         <label className="col-lg-4 col-md-6 col-sm-12">
-                          STATE OF RESIDENCE:
+                          RESIDENTIAL ADDRESS:
                         </label>
                         <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                          {userStateOfResidence}
+                          {address1}
                         </div>
                       </div>
-                    )}
-                  </div>
-                  {/* <!-- MEANS OF IDENTIFICATION --> */}
-                  <div className="card col-lg-12">
-                    <div className="m-t-30 m-b-20">
-                      <h6>MEANS OF IDENTIFICATION</h6>
+                      {userAddressLga && (
+                        <div className="d-flex m-b-10 margin_bottom font_size">
+                          <label className="col-lg-4 col-md-6 col-sm-12">
+                            LGA:
+                          </label>
+                          <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                            {userAddressLga}
+                          </div>
+                        </div>
+                      )}
+                      {userStateOfResidence && (
+                        <div className="d-flex m-b-10 margin_bottom font_size">
+                          <label className="col-lg-4 col-md-6 col-sm-12">
+                            STATE OF RESIDENCE:
+                          </label>
+                          <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                            {userStateOfResidence}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    {/* <div className="d-flex m-b-10 margin_bottom font_size">
+                    {/* <!-- MEANS OF IDENTIFICATION --> */}
+                    <div className="card col-lg-12">
+                      <div className="m-t-30 m-b-20">
+                        <h6>MEANS OF IDENTIFICATION</h6>
+                      </div>
+                      {/* <div className="d-flex m-b-10 margin_bottom font_size">
                     <label className="col-lg-4 col-md-6 col-sm-12">
                       DOCUMENT UPLOADED:
                     </label>
@@ -368,117 +391,117 @@ export default function REVIEW() {
                       {docType}
                     </div>
                   </div> */}
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        ID NUMBER:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {idNumber}
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          ID NUMBER:
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {idNumber}
+                        </div>
+                      </div>
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          DATE OF ISSUE
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {dateOfIssue}
+                        </div>
+                      </div>
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          EXPIRY DATE
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {expireDate}
+                        </div>
                       </div>
                     </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        DATE OF ISSUE
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {dateOfIssue}
-                      </div>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        EXPIRY DATE
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {expireDate}
-                      </div>
-                    </div>
-                  </div>
 
-                  {/* <!-- NEXT OF KIN --> */}
-                  <div className="card col-lg-12">
-                    <div className="m-t-30 m-b-20">
-                      <h6>NEXT OF KIN</h6>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        SURNAME:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {detailOfNextKinRequest?.surName}
+                    {/* <!-- NEXT OF KIN --> */}
+                    <div className="card col-lg-12">
+                      <div className="m-t-30 m-b-20">
+                        <h6>NEXT OF KIN</h6>
                       </div>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        FIRST NAME:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {detailOfNextKinRequest?.firstName}
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          SURNAME:
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {detailOfNextKinRequest?.surName}
+                        </div>
                       </div>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        PHONE NUMBER:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {detailOfNextKinRequest?.phone1}
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          FIRST NAME:
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {detailOfNextKinRequest?.firstName}
+                        </div>
                       </div>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        EMAIL:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {detailOfNextKinRequest?.email}
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          PHONE NUMBER:
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {detailOfNextKinRequest?.phone1}
+                        </div>
                       </div>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        RELATIONSHIP:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {detailOfNextKinRequest?.relationship}
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          EMAIL:
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {detailOfNextKinRequest?.email}
+                        </div>
                       </div>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        RESIDENTIAL ADDRESS:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {detailOfNextKinRequest?.residentialAddress}
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          RELATIONSHIP:
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {detailOfNextKinRequest?.relationship}
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="row">
-                {/* <!-- EMPLOYMENT DETAILS --> */}
-                <div className="m-t-20 col-lg-6">
-                  <div className="card col-lg-12">
-                    <div className="m-t-30 m-b-20">
-                      <h6>EMPLOYMENT DETAILS</h6>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        EMPLOYMENT STATUS:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {employmentDetialRequest?.employmentStatus}
-                      </div>
-                    </div>
-                    <div className="d-flex m-b-10 margin_bottom font_size">
-                      <label className="col-lg-4 col-md-6 col-sm-12">
-                        ANNUAL SALARY / EXPECTED INCOME:
-                      </label>
-                      <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
-                        {employmentDetialRequest?.annualSalary}
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          RESIDENTIAL ADDRESS:
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {detailOfNextKinRequest?.residentialAddress}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* <!-- ACCOUNT SERVICES REQUIRED --> */}
-                <div className="m-t-20 col-lg-6">
+                <div className="row">
+                  {/* <!-- EMPLOYMENT DETAILS --> */}
+                  <div className="m-t-20 col-lg-6">
+                    <div className="card col-lg-12">
+                      <div className="m-t-30 m-b-20">
+                        <h6>EMPLOYMENT DETAILS</h6>
+                      </div>
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          EMPLOYMENT STATUS:
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {employmentDetialRequest?.employmentStatus}
+                        </div>
+                      </div>
+                      <div className="d-flex m-b-10 margin_bottom font_size">
+                        <label className="col-lg-4 col-md-6 col-sm-12">
+                          ANNUAL SALARY / EXPECTED INCOME:
+                        </label>
+                        <div className="col-lg-8 col-md-6 col-sm-12 font-weight-700">
+                          {employmentDetialRequest?.annualSalary}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* <!-- ACCOUNT SERVICES REQUIRED --> */}
+                  {/* <div className="m-t-20 col-lg-6">
                   <div className="card col-lg-12">
                     <div className="m-t-30 m-b-20">
                       <h6>ACCOUNT SERVICES REQUIRED</h6>
@@ -518,50 +541,51 @@ export default function REVIEW() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
-                {/* <!-- UPLOADED DOCUMENTS TABLE --> */}
-                <div className="form-group col-lg-12 col-md-12 col-sm-12 font-weight-700">
-                  <div className="header">
-                    <h5>Uploaded Documents</h5>
-                  </div>
-                  <div className="table-responsive border">
-                    <table className="table table-hover mb-0 c_list">
-                      <thead style={{ backgroundColor: "#c4c4c4" }}>
-                        <tr>
-                          <th>S/N</th>
-                          <th>TITLE</th>
-                          <th>ATTACHMENT</th>
-                          <th>ACTION</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {uploadDocumentRequest.map((item, index) => {
-                          return (
-                            <tr key={index + 1}>
-                              <td>{index + 1}</td>
-                              <td>{item.docTypeName}</td>
-                              <td>{item.imgName}</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="btn btn-suntrust btn-sm m-b-5"
-                                >
-                                  <a
-                                    href={item.fileUrl}
-                                    target="_blank"
-                                    style={{ color: "#fff" }}
-                                    className="px-2"
+                  {/* <!-- UPLOADED DOCUMENTS TABLE --> */}
+                  <div className="form-group col-lg-12 col-md-12 col-sm-12 font-weight-700">
+                    <div className="header">
+                      <h5>Uploaded Documents</h5>
+                    </div>
+                    <div className="table-responsive border">
+                      <table className="table table-hover mb-0 c_list">
+                        <thead style={{ backgroundColor: "#c4c4c4" }}>
+                          <tr>
+                            <th>S/N</th>
+                            <th>TITLE</th>
+                            <th>ATTACHMENT</th>
+                            <th>ACTION</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {uploadDocumentRequest.map((item, index) => {
+                            return (
+                              <tr key={index + 1}>
+                                <td>{index + 1}</td>
+                                <td>{item.docTypeName}</td>
+                                <td>{item.imgName}</td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="btn btn-suntrust btn-sm m-b-5"
                                   >
-                                    view
-                                  </a>
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+                                    <a
+                                      href={item.fileUrl}
+                                      target="_blank"
+                                      style={{ color: "#fff" }}
+                                      className="px-2"
+                                    >
+                                      view
+                                    </a>
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
 
@@ -580,7 +604,7 @@ export default function REVIEW() {
                     <label className="pt-3 pl-1">
                       I agree to the{" "}
                       <a
-                        href="#"
+                        href="https://suntrustng.com/terms-of-use/"
                         style={{ textDecoration: "underline", color: "red" }}
                       >
                         SunTrust Bank Terms and Conditions
@@ -621,6 +645,18 @@ export default function REVIEW() {
                         className="btn btn-block btn-suntrust font-weight-900"
                       >
                         {isLoading ? <Loader /> : "Submit"}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="form-group col-lg-12 col-md-12 col-sm-12 m-b-20 m-t-50">
+                    <div className="col-lg-12 block d-md-flex d-lg-flex align-items-center justify-content-center m-t-20">
+                      <button
+                        type="button"
+                        onClick={handlePrint}
+                        className="col-lg-2 btn btn-light btn-block btn-suntrust font-weight-900"
+                      >
+                        PRINT
                       </button>
                     </div>
                   </div>

@@ -5,7 +5,10 @@ import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { generateOtp } from "../../utils/utilities";
 import { useHistory } from "react-router-dom";
-import { useValidateOtpMutation } from "../../services/Mutations/apis";
+import {
+  useSendMailMutation,
+  useValidateOtpMutation,
+} from "../../services/Mutations/apis";
 import Loader from "../Loader";
 import { handleNext } from "../../services/Mutations/apis";
 import { RootState } from "../../store/store";
@@ -17,8 +20,9 @@ export default function OtpLayer({ data }: any) {
   const [loading, setLoading] = useState(false);
   const [otp, setOtp] = useState("");
   const history = useHistory();
-  const [validateOtp, { data: otpResponse, isLoading, error, isSuccess }] =
+  const [validateOtp, { data: otpResponse}] =
     useValidateOtpMutation();
+  const [sendMail, { data: mailResponse }] = useSendMailMutation();
 
   const compareOtp = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -58,6 +62,14 @@ export default function OtpLayer({ data }: any) {
        ${generatedOtp}. Kindly use the provided OTP to complete Account Opening Request. OTP Expires in 5 Minutes`,
       expiry: now.getTime() + ttl,
     };
+
+    const mailData = {
+      recipientName: data?.firstName,
+      message: `${generatedOtp}. Kindly use the provided OTP to complete Account Opening Request. OTP Expires in 5 Minutes`,
+      email: data?.email,
+      mailSubject: "OTP VALIDATION",
+    };
+    
     const { expiry, token, ...rest } = userDetails;
     const tokenInfo = {
       phoneNumber: data?.phoneNumber1,
@@ -66,6 +78,7 @@ export default function OtpLayer({ data }: any) {
     };
     localStorage.setItem("userDetails", JSON.stringify(tokenInfo));
     validateOtp(rest);
+    sendMail(mailData);
   };
 
   useEffect(() => {
